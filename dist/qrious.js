@@ -407,13 +407,32 @@
       context.fillStyle = qrious.foreground;
       context.globalAlpha = qrious.foregroundAlpha;
 
+      var emptyWidth = Math.floor(frame.width*3/10);
+      if (frame.width % 2 == 1 && emptyWidth % 2 != 1) {
+        emptyWidth--;
+      }
+      var drawWidth = Math.floor((frame.width-emptyWidth)/2);
+      // console.log('frame.width', frame.width);
+      // console.log(emptyWidth);
+
       for (i = 0; i < frame.width; i++) {
         for (j = 0; j < frame.width; j++) {
           if (frame.buffer[(j * frame.width) + i]) {
-            context.fillRect((moduleSize * i) + offset, (moduleSize * j) + offset, moduleSize, moduleSize);
+            if (!qrious.imgUrl || Math.min(i,j) < drawWidth || Math.max(i,j) >= frame.width - drawWidth) 
+              context.fillRect((moduleSize * i) + offset, (moduleSize * j) + offset, moduleSize, moduleSize);
           }
         }
       }
+
+      var base_image = new Image();
+      base_image.src = qrious.imgUrl;
+      base_image.onload = function(){
+        context.drawImage(base_image, moduleSize*drawWidth+offset, moduleSize*drawWidth+offset, moduleSize*emptyWidth, moduleSize*emptyWidth);
+      }
+
+
+      
+
     },
 
     /**
@@ -754,6 +773,9 @@
     this._interleaveBlocks();
     this._pack();
     this._finish();
+
+    // NOTE: Added by mc100s
+    // this._removeCenter();
   }, {
 
     _addAlignment: function(x, y) {
@@ -1464,6 +1486,24 @@
       }
     },
 
+    // _removeCenter: function() {
+    //   var i, j;
+    //   var buffer = this.buffer;
+    //   var width = this.width;
+
+    //   var emptyWidth = Math.floor(width*3/10);
+    //   if (width % 2 == 1 && emptyWidth % 2 != 1) {
+    //     emptyWidth--;
+    //   }
+    //   var drawWidth = Math.floor((width-emptyWidth)/2);
+
+    //   for (i = drawWidth; i < width - drawWidth; i++) {
+    //     for (j = drawWidth; j < width - drawWidth; j++) {
+    //       buffer[(j * width) + i] = 0
+    //     }
+    //   }
+    // },
+
     _reverseMask: function() {
       var x, y;
       var width = this.width;
@@ -1575,6 +1615,7 @@
      */
     draw: function() {
       this.element.src = this.qrious.toDataURL();
+      // this.element.src = 'https://facebookbrand.com/wp-content/themes/fb-branding/prj-fb-branding/assets/images/fb-art.png';
     },
 
     /**
@@ -2054,6 +2095,7 @@
     new Option_1('element'),
     new Option_1('foreground', true, 'black'),
     new Option_1('foregroundAlpha', true, 1, Utilities_1.abs),
+    new Option_1('imgUrl', true, ''),
     new Option_1('level', true, 'L', Utilities_1.toUpperCase),
     new Option_1('mime', true, 'image/png'),
     new Option_1('padding', true, null, Utilities_1.abs),

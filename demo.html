@@ -92,7 +92,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <body>
 <main>
   <section>
-    <img id="qrious">
+    <!-- <img id="qrious"> -->
+    <canvas id="qrious"></canvas>
+    <canvas id="canvas"></canvas>
 
     <form autocomplete="off">
       <label>
@@ -139,6 +141,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         foreground alpha
         <input type="number" name="foregroundAlpha" placeholder="1" min="0" max="1" step="0.1" value="1">
       </label>
+
+      <label>
+        image url
+        <input type="text" name="imgUrl" placeholder="1" value="https://facebookbrand.com/wp-content/themes/fb-branding/prj-fb-branding/assets/images/fb-art.png" spellcheck="false">
+      </label>
     </form>
   </section>
 </main>
@@ -155,11 +162,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     var $padding = document.querySelector('main form [name="padding"]');
     var $size = document.querySelector('main form [name="size"]');
     var $value = document.querySelector('main form [name="value"]');
+    var $imgUrl = document.querySelector('main form [name="imgUrl"]');
 
     var qr = window.qr = new QRious({
       element: document.getElementById('qrious'),
       size: 250,
-      value: 'QRious'
+      value: 'QRious',
+      imgUrl: 'https://facebookbrand.com/wp-content/themes/fb-branding/prj-fb-branding/assets/images/fb-art.png'
     });
 
     $background.addEventListener('change', function() {
@@ -201,6 +210,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     $value.value = 'QRious';
     $value.addEventListener('input', function() {
       qr.value = $value.value;
+    });
+
+    // $imgUrl.value = 'QRious';
+    $imgUrl.addEventListener('input', function() {
+      qr.imgUrl = $imgUrl.value;
     });
   })();
 </script>
